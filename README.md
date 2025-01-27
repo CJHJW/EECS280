@@ -3,3 +3,4 @@ Course material for EECS280 - Programming and Introductory Data Structures Winte
 
 ## Lecture Notes
 ### [Lec2 - Types, Control Structures, and Procedural Abstraction](/notes/lec2.md)
+### [Lec3&4 - Machine Model](/notes/lec3&4.md)
