@@ -1,15 +1,15 @@
 # Lec2 - Types, Control Structures, and Procedural Abstraction
-## C++ Standard Library Types
-### std::string
+## 1. C++ Standard Library Types
+### 1.1 std::string
 A std::string represents text, a sequence of chars.
-### std::pair
+### 1.2 std::pair
 A std::pair represents an ordered pair of values. A template parameter specifies the element type.
 ```cpp
 std::pair<int, bool> p1;
 p1.first = 5;
 p1.second = false;
 ```
-### std::vector
+### 1.3 std::vector
 A std::vector is a homogenous, sequential container. A template parameter specifies the element type.
 #### Several ways to initialize a vector
 ```cpp
@@ -53,7 +53,7 @@ v.push_back(3); // v contains {1, 2, 3}
 v.pop_back(); // v contains {1, 2}
 v.clear(); // v contains {}
 ```
-## Control Structures
+## 2. Control Structures
 ### Short-Circuit Evaluation for && and ||
 1. Evaluate the left operand first.
 2. Evaluate the right operand ONLY if needed.
@@ -61,11 +61,11 @@ Common Pattern: Use the left operand to establish the safety of the right.
 ```cpp
 if (i < v.size()) && (v[i] != 0)
 ```
-## Procedural Abstraction
-### Interfaces vs. Implementations
+## 3. Procedural Abstraction
+### 3.1 Interfaces vs. Implementations
 - an interface specifies what something does.
 - an implementation specifies how it works.
-### Specification Comments (RMEs)
+### 3.2 Specification Comments (RMEs)
 #### Requires
 Prerequisites for the function to make sense.
 The function implementation only needs to cover cases allowed by the interface’s REQUIRES clause.
