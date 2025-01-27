@@ -24,6 +24,7 @@ using namespace std;
 void test_sum_small_data_set();
 void test_count_small_data_set();
 void test_mean_small_data_set();
+void test_median_small_data_set();
 void test_min_small_data_set();
 void test_max_small_data_set();
 void test_stdev_small_data_set();
@@ -37,6 +38,7 @@ int main() {
   // Call your test functions here
   test_count_small_data_set();
   test_mean_small_data_set();
+  test_median_small_data_set();
   test_min_small_data_set();
   test_max_small_data_set();
   test_stdev_small_data_set();
@@ -90,6 +92,34 @@ void test_mean_small_data_set() {
   assert(almost_equal(mean(data), 0.3));
 
   cout << "PASS!" << endl;
+}
+
+void test_median_small_data_set() {
+  cout << "test_median_small_data_set" << endl;
+
+  vector<double> data1;
+  data1.push_back(1);
+  data1.push_back(2);
+  data1.push_back(3);
+  data1.push_back(4);
+  data1.push_back(5);
+
+  assert(almost_equal(median(data1), 3));
+
+  cout << "PASS1!" << endl;
+
+  vector<double> data2;
+  data2.push_back(1);
+  data2.push_back(2);
+  data2.push_back(3);
+  data2.push_back(4);
+  data2.push_back(5);
+  data2.push_back(6);
+
+  assert(almost_equal(median(data2), 3.5));
+
+  cout << "PASS2!" << endl;
+
 }
 
 void test_min_small_data_set() {

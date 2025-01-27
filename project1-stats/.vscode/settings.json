@@ -4,6 +4,7 @@
         "bitset": "cpp",
         "map": "cpp",
         "unordered_map": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "iostream": "cpp"
     }
 }
