@@ -91,7 +91,15 @@ void test_mean_small_data_set() {
 
   assert(almost_equal(mean(data), 0.3));
 
-  cout << "PASS!" << endl;
+  cout << "PASS1!" << endl;
+
+  vector<double> data1;
+  data1.push_back(1);
+
+  assert(almost_equal(mean(data1), 1));
+
+  cout << "PASS2!" << endl;
+
 }
 
 void test_median_small_data_set() {
@@ -119,6 +127,13 @@ void test_median_small_data_set() {
   assert(almost_equal(median(data2), 3.5));
 
   cout << "PASS2!" << endl;
+
+  vector<double> data3;
+  data3.push_back(1);
+
+  assert(almost_equal(median(data3), 1));
+
+  cout << "PASS3!" << endl;
 
 }
 
@@ -171,7 +186,11 @@ void test_percentile_small_data_set() {
 
   assert(almost_equal(percentile(data, 1.0), 1));
 
-  cout << "PASS!" << endl;
+  cout << "PASS1!" << endl;
+
+  assert(almost_equal(percentile(data, 0), -1));
+
+  cout << "PASS2!" << endl;
 }
 
 void test_filter_small_data_set() {
