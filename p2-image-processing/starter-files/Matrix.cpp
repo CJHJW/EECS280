@@ -146,8 +146,8 @@ int Matrix_min_value_in_row(const Matrix* mat, int row,
   assert(0 <= row && row < mat->height);
   assert(0 <= column_start && column_end < mat->width);
   assert(column_start < column_end);
-  int min = 1000;
-  for (int i = column_start; i < column_end; i++) {
+  int min = mat->data[row*mat-> width + column_start];
+  for (int i = column_start + 1; i < column_end; i++) {
     if(mat->data[row*mat->width+i] < min) {
       min = mat->data[row*mat->width+i];
     }
