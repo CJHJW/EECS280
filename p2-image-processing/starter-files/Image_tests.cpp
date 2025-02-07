@@ -64,35 +64,53 @@ TEST(test_width_height) {
   ASSERT_EQUAL(Image_width(&img), 2);
 }
 
-// Sets various pixels in a 2x2 Image and checks
-// that Image_fill correctly fill the Image.
+// Sets various pixels in two 2x2 Images and checks
+// that Image_fill correctly fill these Images.
 TEST(test_fill_pixel) {
   Image img;
+  Image img1;
   const Pixel red = {255, 0, 0};
   const Pixel green = {0, 255, 0};
   const Pixel blue = {0, 0, 255};
   const Pixel white = {255, 255, 255};
-  const Pixel new_color = {10, 5, 0};
+  const Pixel new_color_1 = {10, 5, 0};
 
   Image_init(&img, 2, 2);
+  Image_init(&img1, 2, 2);
   Image_set_pixel(&img, 0, 0, red);
   Image_set_pixel(&img, 0, 1, green);
   Image_set_pixel(&img, 1, 0, blue);
   Image_set_pixel(&img, 1, 1, white);
+  Image_set_pixel(&img1, 0, 0, white);
+  Image_set_pixel(&img1, 0, 1, blue);
+  Image_set_pixel(&img1, 1, 0, green);
+  Image_set_pixel(&img1, 1, 1, red);
 
-  Image_fill(&img, new_color);
+  Image_fill(&img, new_color_1);
 
   // Check each pixel
   for (int i = 0; i < Image_width(&img); i++) {
     for (int j = 0; j < Image_height(&img); j++) {
-      ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img, i, j), new_color));
+      ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img, i, j), new_color_1));
     }
   }
+
+
+  Image_fill(&img1, new_color_1);
+
+  // Check each pixel
+  for (int i = 0; i < Image_width(&img1); i++) {
+    for (int j = 0; j < Image_height(&img1); j++) {
+      ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img1, i, j), new_color_1));
+    }
+  }
+
+  ASSERT_TRUE(Image_equal(&img, &img1));
 }
 
 // Read dog.ppm file to initialize the Image.
 // Print the Image to verify the result.
-TEST(read_file_initialize) {
+TEST(test_file_initialize) {
   Image img;
   std::ifstream inFile("dog.ppm");
   Image_init(&img, inFile);

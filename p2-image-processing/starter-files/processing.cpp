@@ -86,8 +86,20 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
 void compute_energy_matrix(const Image* img, Matrix* energy) {
-  assert(false); // TODO Replace with your implementation!
-  assert(squared_difference(Pixel(), Pixel())); // TODO delete me, this is here to make it compile
+  Matrix_init(energy, Image_width(img), Image_height(img));
+  int row = Image_width(img) - 1;
+  int col = Image_width(img) - 1;
+  for (int i = 1; i < row; i++) {
+    for (int j = 1; j < col; j++) {
+      Pixel N = Image_get_pixel(img, i, j-1);
+      Pixel S = Image_get_pixel(img, i, j+1);
+      Pixel W = Image_get_pixel(img, i-1, j);
+      Pixel E = Image_get_pixel(img, i+1, j);
+      *Matrix_at(energy, i, j) =squared_difference(N, S) + squared_difference(W, E);
+    }
+  }
+  int max = Matrix_max(energy);
+  Matrix_fill_border(energy, max);
 }
 
 
@@ -101,7 +113,23 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
 void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
-  assert(false); // TODO Replace with your implementation!
+  Matrix_init(cost, Matrix_width(energy), Matrix_height(energy));
+  for (int i = 0; i < Matrix_width(cost); i++) {
+    *Matrix_at(cost, 0, i) = *Matrix_at(energy, 0, i);
+  }
+  for (int i = 1; i < Matrix_height(cost); i++) {
+    for (int j = 0; j < Matrix_width(cost); j++) {
+      if (j==1) {
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j+1));
+      }
+      else if (j==Matrix_width(cost)-1) {
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1));
+      }
+      else {
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1));
+      }
+    }
+  }
 }
 
 
