@@ -19,11 +19,11 @@ void simulate_random_data(int n, int max_value) {
 
 int main() {
 
-  int num_elements;
+  int num_elements = 5;
   cout << "How many elements? ";
   cin >> num_elements;
   
-  int max_value ;
+  int max_value = 10;
   cout << "What's the maximum value? ";
   cin >> max_value;
 

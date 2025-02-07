@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <cassert>
+#include <fstream>
 
 using namespace std;
 
@@ -84,11 +85,34 @@ TEST(test_fill_pixel) {
   // Check each pixel
   for (int i = 0; i < Image_width(&img); i++) {
     for (int j = 0; j < Image_height(&img); j++) {
-      ASSERT_EQUAL(Image_get_pixel(&img, i, j).r, new_color.r);
-      ASSERT_EQUAL(Image_get_pixel(&img, i, j).g, new_color.g);
-      ASSERT_EQUAL(Image_get_pixel(&img, i, j).b, new_color.b);
+      ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img, i, j), new_color));
     }
   }
 }
+
+// Read dog.ppm file to initialize the Image.
+// Print the Image to verify the result.
+TEST(read_file_initialize) {
+  Image img;
+  std::ifstream inFile("dog.ppm");
+  Image_init(&img, inFile);
+
+  // Capture our output
+  ostringstream s;
+  Image_print(&img, s);
+
+  // Correct output
+  ostringstream correct;
+  correct << "P3\n5 5\n255\n";
+  correct << "0 0 0 0 0 0 255 255 250 0 0 0 0 0 0 \n";
+  correct << "255 255 250 126 66 0 126 66 0 126 66 0 255 255 250 \n";
+  correct << "126 66 0 0 0 0 255 219 183 0 0 0 126 66 0 \n"; 
+  correct << "255 219 183 255 219 183 0 0 0 255 219 183 255 219 183 \n"; 
+  correct << "255 219 183 0 0 0 134 0 0 0 0 0 255 219 183 \n";
+  ASSERT_EQUAL(s.str(), correct.str());
+  
+}
+
+
 
 TEST_MAIN() // Do NOT put a semicolon here
