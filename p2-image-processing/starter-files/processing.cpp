@@ -87,7 +87,7 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           See the project spec for details on computing the energy matrix.
 void compute_energy_matrix(const Image* img, Matrix* energy) {
   Matrix_init(energy, Image_width(img), Image_height(img));
-  int row = Image_width(img) - 1;
+  int row = Image_height(img) - 1;
   int col = Image_width(img) - 1;
   for (int i = 1; i < row; i++) {
     for (int j = 1; j < col; j++) {
@@ -95,7 +95,7 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
       Pixel S = Image_get_pixel(img, i, j+1);
       Pixel W = Image_get_pixel(img, i-1, j);
       Pixel E = Image_get_pixel(img, i+1, j);
-      *Matrix_at(energy, i, j) =squared_difference(N, S) + squared_difference(W, E);
+      *Matrix_at(energy, i, j) = squared_difference(N, S) + squared_difference(W, E);
     }
   }
   int max = Matrix_max(energy);
@@ -119,14 +119,18 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
   }
   for (int i = 1; i < Matrix_height(cost); i++) {
     for (int j = 0; j < Matrix_width(cost); j++) {
-      if (j==1) {
+      if (j==0) {
         *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j+1));
       }
       else if (j==Matrix_width(cost)-1) {
         *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1));
       }
       else {
-        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1));
+        // *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1));
+        // ^^ the min shouldn't have 3 arguments? didn't allow the file to compile. 
+
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j),  min(*Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1)));
+
       }
     }
   }
@@ -148,7 +152,7 @@ vector<int> find_minimal_vertical_seam(const Matrix* cost) {
   int height = Matrix_height(cost);
   int width = Matrix_width(cost);
   vector<int> seam(height);
-  for (int i = height - 1; i >= 0; i++) {
+  for (int i = height - 1; i >= 0; i--) {
     if (i==height-1) {
       seam.at(i) = Matrix_column_of_min_value_in_row(cost, i, 0, width);
     }
@@ -188,15 +192,16 @@ void remove_vertical_seam(Image *img, const vector<int> &seam) {
   }
   Image new_img;
   Image_init(&new_img, Image_width(img)-1, Image_height(img));
+  int skip = 0;
   for (int i = 0; i < Image_height(&new_img); i++) {
-    int skip = 0;
+    skip = 0;
     for (int j = 0; j < Image_width(&new_img); j++) {
       if (j==seam.at(i)) {
-        skip++;
+        skip++; // Should only skip 1 pixel per row
       }
-      Pixel color = Image_get_pixel(img, i, skip);
+      Pixel color = Image_get_pixel(img, i, j + skip); // previously last parameter (column) was skip
       Image_set_pixel(&new_img, i, j, color);
-      skip++;
+      // skip++;  This might be buggy code making us skip more than 1 column at a time
     }
   }
   *img = new_img;
