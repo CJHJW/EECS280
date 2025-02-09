@@ -193,6 +193,42 @@ TEST(test_fill_pixel_4) {
 
 }
 
+// Sets various pixels in a 5x3 image and checks
+// that Image_fill correctly fills the Image.
+TEST(test_fill_pixel_5)
+{
+  Image img;
+  Image_init(&img, 5, 3);
+
+  const Pixel red = {255, 0, 0};
+  const Pixel green = {0, 255, 0};
+  const Pixel blue = {0, 0, 255};
+  const Pixel new_color = {1, 2, 3};
+
+  Image_set_pixel(&img, 0, 0, red);
+  Image_set_pixel(&img, 0, 1, green);
+  Image_set_pixel(&img, 0, 2, blue);
+  Image_set_pixel(&img, 1, 0, blue);
+  Image_set_pixel(&img, 1, 3, red);
+  Image_set_pixel(&img, 1, 4, green);
+  
+  Image_set_pixel(&img, 2, 0, red);
+  Image_set_pixel(&img, 2, 1, green);
+  Image_set_pixel(&img, 2, 2, blue);
+  Image_set_pixel(&img, 2, 3, blue);
+  Image_set_pixel(&img, 2, 4, red);
+
+  Image_fill(&img, new_color);
+
+  // Check each pixel
+  for (int i = 0; i < Image_width(&img); i++) {
+    for (int j = 0; j < Image_height(&img); j++) {
+      ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img, j, i), new_color));
+    }
+  }
+
+}
+
 // Read dog.ppm file to initialize the Image.
 // Print the Image to verify the result.
 TEST(test_file_initialize) {
