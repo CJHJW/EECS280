@@ -120,16 +120,22 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
   for (int i = 1; i < Matrix_height(cost); i++) {
     for (int j = 0; j < Matrix_width(cost); j++) {
       if (j==0) {
-        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j+1));
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + 
+        min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j+1));
       }
       else if (j==Matrix_width(cost)-1) {
-        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1));
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) +
+         min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1));
       }
       else {
-        // *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j), *Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1));
+        // *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) 
+        // + min(*Matrix_at(cost, i-1, j), 
+        // *Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1));
         // ^^ the min shouldn't have 3 arguments? didn't allow the file to compile. 
 
-        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) + min(*Matrix_at(cost, i-1, j),  min(*Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1)));
+        *Matrix_at(cost, i, j) = *Matrix_at(energy, i, j) +
+        min(*Matrix_at(cost, i-1, j),  
+        min(*Matrix_at(cost, i-1, j-1), *Matrix_at(cost, i-1, j+1)));
 
       }
     }
@@ -163,7 +169,8 @@ vector<int> find_minimal_vertical_seam(const Matrix* cost) {
       seam.at(i) = Matrix_column_of_min_value_in_row(cost, i, width-2, width);
     }
     else {
-      seam.at(i) = Matrix_column_of_min_value_in_row(cost, i, seam.at(i+1)-1, seam.at(i+1)+2);
+      seam.at(i) = 
+      Matrix_column_of_min_value_in_row(cost, i, seam.at(i+1)-1, seam.at(i+1)+2);
     }
   }
 
@@ -199,7 +206,8 @@ void remove_vertical_seam(Image *img, const vector<int> &seam) {
       if (j==seam.at(i)) {
         skip++; // Should only skip 1 pixel per row
       }
-      Pixel color = Image_get_pixel(img, i, j + skip); // previously last parameter (column) was skip
+      // previously last parameter (column) was skip
+      Pixel color = Image_get_pixel(img, i, j + skip); 
       Image_set_pixel(&new_img, i, j, color);
       // skip++;  This might be buggy code making us skip more than 1 column at a time
     }
