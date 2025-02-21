@@ -12,5 +12,10 @@ TEST(test_card_ctor) {
 }
 
 // Add more test cases here
+TEST(test_compare_suit) {
+    Card ace_hearts(ACE, HEARTS);
+    Card ace_diamonds(ACE, DIAMONDS);
+    ASSERT_TRUE(ace_hearts < ace_diamonds);
+}
 
 TEST_MAIN()
