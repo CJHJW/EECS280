@@ -268,16 +268,18 @@ bool Card_less(const Card &a, const Card &b, Suit trump) {
     return true;
   }
   else if ((a.is_trump(trump)) && (b.is_trump(trump))) {
-    if (a.is_left_bower(trump)) {
-      return false;
-    }
-    else if (b.is_left_bower(trump)) {
-      return true;
-    }
-    else if (a.is_right_bower(trump)) {
-      return false;
+    if (a.is_right_bower(trump)) {
+        return false;
     }
     else if (b.is_right_bower(trump)) {
+        return true;
+    }
+    else if (a.is_left_bower(trump))
+    {
+      return false;
+    }
+    else if (b.is_left_bower(trump))
+    {
       return true;
     }
     else {
