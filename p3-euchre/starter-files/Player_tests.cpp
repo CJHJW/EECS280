@@ -386,7 +386,8 @@ TEST(test_add_and_discard)
     jerry->add_card(Card(TEN, CLUBS));
     jerry->add_card(Card(ACE, CLUBS));
 
-    ted->add_and_discard(
+    // NINE of SPADES should be dropped out of the hand
+    jerry->add_and_discard(
         Card(QUEEN, DIAMONDS)   // Upcard
     );
 
@@ -404,6 +405,8 @@ TEST(test_add_and_discard)
 
     Card card_led21 = jerry->lead_card(DIAMONDS);
     ASSERT_EQUAL(card_led21, Card(QUEEN, DIAMONDS));
+
+    delete jerry;
 
 }
 
