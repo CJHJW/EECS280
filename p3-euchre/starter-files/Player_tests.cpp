@@ -56,8 +56,8 @@ TEST(test_player_insertion) {
   bob->add_card(Card(KING, SPADES));
   bob->add_card(Card(ACE, SPADES));
 
-  // Bob makes tump
-  Card nine_spades(NINE, SPADES);
+  // Bob makes trump
+  Card nine_spades(JACK, SPADES);
   Suit trump;
   bool orderup = bob->make_trump(
     nine_spades,    // Upcard
@@ -68,7 +68,7 @@ TEST(test_player_insertion) {
 
   // Verify Bob's order up and trump suit
 
-  // If upcard is nine spades, and he has 2 face + ace spades
+  // If upcard is JACK spades, and he has 2 face + ace spades
   // he should order up -> order up is true
   ASSERT_TRUE(orderup);
   ASSERT_EQUAL(trump, SPADES);
@@ -186,6 +186,76 @@ TEST(test_player_insertion) {
     ASSERT_FALSE(orderup3);
 
     delete nelson;
+
+    Player * kevin = Player_factory("Kevin", "Simple");
+    kevin->add_card(Card(NINE, SPADES));
+    kevin->add_card(Card(TEN, SPADES));
+    kevin->add_card(Card(QUEEN, SPADES));
+    kevin->add_card(Card(KING, SPADES));
+    kevin->add_card(Card(ACE, DIAMONDS));
+
+
+    Suit trump4;
+
+    bool orderup4 = kevin->make_trump(
+        nine_hearts,        // Upcard
+        false,              // is not dealer
+        2,                  // Round 2
+        trump4              // Suit ordered up
+    );
+
+    ASSERT_TRUE(orderup4);
+    ASSERT_EQUAL(trump4, DIAMONDS);
+
+    delete kevin;
+    kevin = nullptr;
+
+    kevin = Player_factory("Kevin", "Simple");
+
+    kevin->add_card(Card(NINE, SPADES));
+    kevin->add_card(Card(TEN, SPADES));
+    kevin->add_card(Card(QUEEN, SPADES));
+    kevin->add_card(Card(KING, SPADES));
+    kevin->add_card(Card(JACK, DIAMONDS));
+
+
+    Suit trump5;
+
+    bool orderup5 = kevin->make_trump(
+        nine_hearts,        // Upcard
+        false,              // is not dealer
+        2,                  // Round 2
+        trump5              // Suit ordered up
+    );
+
+    ASSERT_TRUE(orderup5);
+    ASSERT_EQUAL(trump5, DIAMONDS);
+
+    delete kevin;
+    kevin = nullptr;
+
+    kevin = Player_factory("Kevin", "Simple");
+
+    kevin->add_card(Card(NINE, SPADES));
+    kevin->add_card(Card(TEN, SPADES));
+    kevin->add_card(Card(QUEEN, SPADES));
+    kevin->add_card(Card(KING, SPADES));
+    kevin->add_card(Card(ACE, SPADES));
+
+
+    Suit trump7;
+
+    bool orderup7 = kevin->make_trump(
+        nine_hearts,        // Upcard
+        false,              // is not dealer
+        2,                  // Round 2
+        trump7              // Suit ordered up
+    );
+
+    ASSERT_FALSE(orderup7);
+
+    delete kevin;
+    kevin = nullptr;
 
   }
 
@@ -408,7 +478,37 @@ TEST(test_add_and_discard)
 
     delete jerry;
 
+    Player * kevin = Player_factory("Kevin", "Simple");
+    kevin->add_card(Card(KING, DIAMONDS));
+    kevin->add_card(Card(QUEEN, DIAMONDS));
+    kevin->add_card(Card(ACE, DIAMONDS));
+    kevin->add_card(Card(JACK, DIAMONDS));
+    kevin->add_card(Card(JACK, HEARTS));
+
+    // TEN of DIAMONDS should be dropped out of the hand
+    jerry->add_and_discard(
+        Card(TEN, DIAMONDS)   // Upcard
+    );
+
+    Card card_led22 = kevin->lead_card(DIAMONDS);
+    ASSERT_EQUAL(card_led22, Card(JACK, DIAMONDS));
+
+    Card card_led23 = kevin->lead_card(DIAMONDS);
+    ASSERT_EQUAL(card_led23, Card(JACK, HEARTS));
+
+    Card card_led24 = kevin->lead_card(DIAMONDS);
+    ASSERT_EQUAL(card_led24, Card(ACE, DIAMONDS));
+
+    Card card_led25 = kevin->lead_card(DIAMONDS);
+    ASSERT_EQUAL(card_led25, Card(KING, DIAMONDS));
+
+    Card card_led26 = kevin->lead_card(DIAMONDS);
+    ASSERT_EQUAL(card_led26, Card(QUEEN, DIAMONDS));
+
+    delete kevin;
+
 }
+
 
 TEST(test_simple_player_play_card) {
     // Rules are that you should play the same suit as
@@ -475,7 +575,7 @@ TEST(test_simple_player_play_card) {
     obama->add_card(Card(ACE, SPADES));
 
     Card jack_spades(JACK, SPADES);
-    Card card_played2 = bob->play_card(
+    Card card_played2 = obama->play_card(
         jack_spades,        // Jack Spades is led
         HEARTS      // Trump suit
     );
