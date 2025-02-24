@@ -38,12 +38,7 @@ class SimplePlayer : public Player {
                         if ((hand[i].is_trump(trump)) && (hand[i].is_face_or_ace())) {
                             count ++;
                         }
-                        if (hand[i].is_left_bower(trump)) {
-                            count ++;
-                        }
-                        if (hand[i].is_right_bower(trump)) {
-                            count ++;
-                        }
+                        
                     }
                     if (count >= 2) {
                         order_up_suit = trump;
