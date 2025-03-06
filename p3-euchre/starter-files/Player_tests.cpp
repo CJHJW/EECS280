@@ -255,7 +255,6 @@ TEST(test_player_insertion) {
     ASSERT_FALSE(orderup7);
 
     delete kevin;
-    kevin = nullptr;
 
   }
 
@@ -329,6 +328,8 @@ TEST(test_player_insertion) {
 
     Card jack_spades(JACK, SPADES);
     ASSERT_EQUAL(card_led3, jack_spades);
+
+    delete charles;
 
 }
 
@@ -486,7 +487,7 @@ TEST(test_add_and_discard)
     kevin->add_card(Card(JACK, HEARTS));
 
     // TEN of DIAMONDS should be dropped out of the hand
-    jerry->add_and_discard(
+    kevin->add_and_discard(
         Card(TEN, DIAMONDS)   // Upcard
     );
 
@@ -504,6 +505,38 @@ TEST(test_add_and_discard)
 
     Card card_led26 = kevin->lead_card(DIAMONDS);
     ASSERT_EQUAL(card_led26, Card(QUEEN, DIAMONDS));
+
+    delete kevin;
+    kevin = nullptr;
+
+    // A high-ranked card is discarded because all the lower-ranked cards 
+    // were of the trump suit.
+    kevin = Player_factory("Kevin", "Simple");
+    kevin->add_card(Card(NINE, SPADES));
+    kevin->add_card(Card(TEN, SPADES));
+    kevin->add_card(Card(QUEEN, SPADES));
+    kevin->add_card(Card(KING, SPADES));
+    kevin->add_card(Card(ACE, DIAMONDS));
+
+    // ACE of DIAMONDS should be dropped out of the hand
+    kevin->add_and_discard(
+        Card(JACK, SPADES)   // Upcard
+    );
+
+    Card card_led27 = kevin->lead_card(SPADES);
+    ASSERT_EQUAL(card_led27, Card(JACK, SPADES));
+
+    Card card_led28 = kevin->lead_card(SPADES);
+    ASSERT_EQUAL(card_led28, Card(KING, SPADES));
+
+    Card card_led29 = kevin->lead_card(SPADES);
+    ASSERT_EQUAL(card_led29, Card(QUEEN, SPADES));
+
+    Card card_led30 = kevin->lead_card(SPADES);
+    ASSERT_EQUAL(card_led30, Card(TEN, SPADES));
+
+    Card card_led31 = kevin->lead_card(SPADES);
+    ASSERT_EQUAL(card_led31, Card(NINE, SPADES));
 
     delete kevin;
 
@@ -605,8 +638,8 @@ TEST(test_simple_player_play_card) {
     ASSERT_EQUAL(card_played3, Card(KING, SPADES));
     delete tyler;
 
-    // Testing if the person will play the highest card
-    // when following suit if they only have trump cards
+    // Testing if the person will play the lowest card
+    // when they only have trump cards but don't have led cards.
 
     Player * john = Player_factory("John", "Simple");
     john->add_card(Card(NINE, SPADES));
@@ -619,13 +652,115 @@ TEST(test_simple_player_play_card) {
     // highest card while following led suit should be
     // ACE of spades here
 
-    Card card_played4 = john->play_card(
+    Card card_played6 = john->play_card(
+        Card(JACK, HEARTS),        // Led card
+        SPADES                     // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played6, Card(NINE, SPADES));
+    delete john;
+
+    // Testing if the person will play the highest card
+    // when following suit if they only have trump cards
+
+    Player * cat = Player_factory("Cat", "Simple");
+    cat->add_card(Card(NINE, SPADES));
+    cat->add_card(Card(TEN, SPADES));
+    cat->add_card(Card(QUEEN, SPADES));
+    cat->add_card(Card(KING, SPADES));
+    cat->add_card(Card(ACE, SPADES));
+
+    // Jack of spades is led and SPADES is trump
+    // highest card while following led suit should be
+    // ACE of spades here
+
+    Card card_played4 = cat->play_card(
         jack_spades,        // Led card
         SPADES          // Trump suit
     );
 
     ASSERT_EQUAL(card_played4, Card(ACE, SPADES));
-    delete john;
+    delete cat;
+
+    // The card follow the suit is the lowest card
+    cat = Player_factory("Cat", "Simple");
+    cat->add_card(Card(NINE, SPADES));
+    cat->add_card(Card(TEN, HEARTS));
+    cat->add_card(Card(QUEEN, HEARTS));
+    cat->add_card(Card(KING, HEARTS));
+    cat->add_card(Card(ACE, HEARTS));
+
+    // Jack of spades is led and SPADES is trump
+    // highest card while following led suit should be
+    // ACE of spades here
+
+    Card card_played7 = cat->play_card(
+        jack_spades,        // Led card
+        HEARTS          // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played7, Card(NINE, SPADES));
+    delete cat;
+
+    cat = Player_factory("Cat", "Simple");
+    cat->add_card(Card(NINE, HEARTS));
+    cat->add_card(Card(TEN, HEARTS));
+    cat->add_card(Card(QUEEN, SPADES));
+    cat->add_card(Card(JACK, DIAMONDS));
+    cat->add_card(Card(JACK, HEARTS));
+
+
+    Card card_played8 = cat->play_card(
+        Card(KING, HEARTS),        // Led card
+        DIAMONDS                   // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played8, Card(TEN, HEARTS));
+
+    Card card_played9 = cat->play_card(
+        Card(KING, HEARTS),        // Led card
+        DIAMONDS                   // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played9, Card(NINE, HEARTS));
+
+    Card card_played10 = cat->play_card(
+        Card(KING, HEARTS),        // Led card
+        DIAMONDS                   // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played10, Card(QUEEN, SPADES));
+
+    Card card_played11 = cat->play_card(
+        Card(KING, HEARTS),        // Led card
+        DIAMONDS                   // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played11, Card(JACK, HEARTS));
+
+    Card card_played12 = cat->play_card(
+        Card(KING, HEARTS),        // Led card
+        DIAMONDS                   // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played12, Card(JACK, DIAMONDS));
+    delete cat;
+
+    cat = Player_factory("Cat", "Simple");
+    cat->add_card(Card(NINE, HEARTS));
+    cat->add_card(Card(TEN, HEARTS));
+    cat->add_card(Card(QUEEN, HEARTS));
+    cat->add_card(Card(JACK, DIAMONDS));
+    cat->add_card(Card(JACK, HEARTS));
+
+
+    Card card_played13 = cat->play_card(
+        Card(KING, HEARTS),        // Led card
+        DIAMONDS                   // Trump suit
+    );
+
+    ASSERT_EQUAL(card_played13, Card(QUEEN, HEARTS));
+    delete cat;
 
 }   
 
