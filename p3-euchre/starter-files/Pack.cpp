@@ -51,9 +51,12 @@
   void Pack::shuffle() {
     for (int i = 0; i < 7; ++i) {
         std::array<Card, PACK_SIZE> temp = cards;
-        for (int j = 0; j < PACK_SIZE; j+=2) {
-            cards[j] = temp[j/2+12];
-            cards[j+1] = temp[j/2];
+        int left = 0;   
+        int right = PACK_SIZE / 2; 
+
+        for (int j = 0; j < PACK_SIZE; j += 2) {
+            cards[j] = temp[right++];  
+            cards[j+1] = temp[left++]; 
         }
     }
     reset();
