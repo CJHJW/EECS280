@@ -10,6 +10,7 @@
  */
 
 #include <iostream>
+using namespace std;
 
 // Represent a Card's Rank.
 // Rank is a type that can represent the specific values

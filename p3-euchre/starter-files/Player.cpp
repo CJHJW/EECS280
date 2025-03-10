@@ -206,6 +206,7 @@ class HumanPlayer : public Player {
         void add_card(const Card &c) override {
             assert(hand.size() < MAX_HAND_SIZE);
             hand.push_back(c);
+            sort(hand.begin(), hand.end());
         }
 
 
@@ -217,12 +218,10 @@ class HumanPlayer : public Player {
             cin >> decision;
             if (decision != "pass") {
                 Suit ordered_up = string_to_suit(decision);
-                cout << name << " orders up " << ordered_up << endl;
                 order_up_suit = ordered_up;
                 return true;
             }
             else {
-                cout << name << " passes\n";
                 return false;
             }
         }
@@ -254,7 +253,6 @@ class HumanPlayer : public Player {
             int decision;
             cin >> decision;
             Card play = hand[decision];
-            cout << play << " led by " << name << endl;
             hand.erase(hand.begin()+decision);
             return play;
         }
@@ -270,7 +268,7 @@ class HumanPlayer : public Player {
             int decision;
             cin >> decision;
             Card play = hand[decision];
-            cout << play << " led by " << name << endl;
+            // cout << play << " led by " << name << endl;
             hand.erase(hand.begin()+decision);
             return play;
         }
