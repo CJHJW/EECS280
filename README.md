@@ -2,7 +2,7 @@
 Course material for EECS280 - Programming and Introductory Data Structures Winter 2025  
 Course webiste: https://eecs280.org/
 ## [Lecture Notes](https://eecs280staff.github.io/notes/)
-## Project
+## Projects
 ### [Project1: Statistics](https://eecs280staff.github.io/stats/)
 ### [Project2: Image Processing](https://eecs280staff.github.io/image-processing/)
 ### [Project3: Euchre](https://eecs280staff.github.io/euchre/)
