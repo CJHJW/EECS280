@@ -1,7 +1,4 @@
 # EECS280
 Course material for EECS280 - Programming and Introductory Data Structures Winter 2025
-
-## Lecture Notes
-### [Lec2 - Types, Control Structures, and Procedural Abstraction](/notes/lec2.md)
-### [Lec3&4 - Machine Model](/notes/lec3&4.md)
-### [Lec5 - `const`, `structs`, and C-Style ADTs](/notes/lec5.md)
+Course webiste: https://eecs280.org/#calendar-header
+## [Lecture Notes](https://eecs280staff.github.io/notes/)
