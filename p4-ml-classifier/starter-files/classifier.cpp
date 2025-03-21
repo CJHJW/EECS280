@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cmath>
 #include <set>
 #include <map>
 using namespace std;
@@ -15,6 +16,12 @@ public:
     // Print information about the training data
     void print_train_info();
 
+     // Calculate lnP(C) for label C 
+     double log_prior(string tag);
+
+     // Calculate lnP(w|C) for label C and word w
+     double log_likelihood(string tag, string word);
+
 private:
     // The total number of posts in the entire training set.
     int num_posts;
@@ -27,9 +34,9 @@ private:
     // For each word w, the number of posts in the entire training set that contain w.
     map<string, int> words_count;
     // For each label C, the number of posts with that label.
-    map<string, int> tags_count;
+    map<string, pair<int, double>>tags_count;
     // For each label C and word w, the number of posts with label C that contain w.
-    map<pair<string, string>, int> words_tags_count;
+    map<pair<string, string>, pair<int, double>> words_tags_count;
 
     // Initialize classifier by data(Title: "tag,content")
     void initialize_method_one(ifstream &train);
@@ -39,6 +46,7 @@ private:
 
     // Read each post data into each containers indexed by tag and content
     void posts_read(string &content, string &tag);
+
 
 };
 
@@ -110,6 +118,13 @@ classifier::classifier(ifstream &train) : classifier()
         initialize_method_two(train);
     }
     vocabulary_size = words_bag.size();
+    for (auto &[key, values]: tags_count) {
+        values.second = log_prior(key);
+    }
+    for (auto &[keys, values]: words_tags_count) {
+        values.second = log_likelihood(keys.first, keys.second);
+    }
+
 }
 
 void classifier::initialize_method_one(ifstream &train)
@@ -151,11 +166,11 @@ void classifier::posts_read(string &content, string &tag)
     for (const auto &w : words_in_post)
     {
         words_count[w]++;
-        words_tags_count[{tag, w}]++;
+        words_tags_count[{tag, w}].first++;
     }
     num_posts++;
     posts[num_posts] = {tag, content};
-    tags_count[tag]++;
+    tags_count[tag].first++;
 }
 
 void classifier::print_train_info() {
@@ -171,4 +186,42 @@ void classifier::print_train_info() {
     cout << "vocabulary size = " << vocabulary_size << endl;
     // 4. An extra blank line
     cout << endl;
+    // 5. The classes in the training data, and the number of examples for each.
+    cout << "classes:" << endl;
+    for (const auto &[key, values] : tags_count) {
+        cout << "  " << key << ", " << values.first << " examples, log-prior = " 
+        << values.second<< endl;
+    }
+    /*
+        6. For each label, and for each word that occurs for that label: The number 
+        of posts with that label that contained the word, and the log-likelihood of 
+        the word given the label.
+    */ 
+   cout << "classifier parameters:" << endl;
+   for (const auto &[key, values] : words_tags_count) {
+        cout << "  " << key.first << ":" << key.second << ", count = " << values.first
+        << ", log-likelihood = " << values.second << endl;
+    }
+
+    // 7. An extra newline
+    cout << endl;
+}
+
+double classifier::log_prior(string tag) {
+    return log(static_cast<double>(tags_count[tag].first) / num_posts);
+}
+
+double classifier::log_likelihood(string tag, string word) {
+    int posts_tag = tags_count[tag].first;
+    double posts_tag_word = words_tags_count[{tag, word}].first;
+    if (posts_tag_word == 0) {
+        double posts_word = words_count[word];
+        if (posts_word != 0) {
+            posts_tag_word = posts_word;
+        }
+        else {
+            posts_tag_word = 1;
+        }
+    }
+    return log(posts_tag_word / posts_tag);
 }
