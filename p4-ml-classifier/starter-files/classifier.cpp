@@ -5,13 +5,15 @@
 #include <cmath>
 #include <set>
 #include <map>
+#include "csvstream.hpp"
+
 using namespace std;
 
 class classifier
 {
 public:
     classifier();
-    classifier(ifstream &train);
+    classifier(csvstream &train);
 
     // Print information about the training data
     void print_train_info();
@@ -81,18 +83,15 @@ int main(int argc, char *argv[])
          message, where filename is the name of the file that could
          not be opened, and quit by returning a non-zero value from main.
      */
-    ifstream inFileTrain(argv[1]);
-    if (!inFileTrain.is_open())
-    {
-        cout << "Error opening file: " << argv[1] << endl;
-        return 1;
-    }
-
+    
+    string train_file_name = argv[1];
+    csvstream train_file(train_file_name);
+    
     // 2. Set floating point precision
     cout.precision(3);
 
     // 3. Read Posts
-    classifier train(inFileTrain);
+    classifier train(train_file);
 
     // 4. Print train data
 
@@ -104,21 +103,16 @@ int main(int argc, char *argv[])
 
     // 5. If have test
     if (argc == 3)
-    {
-        ifstream inFileTest(argv[2]);
-        if (!inFileTest.is_open())
-        {
-            cout << "Error opening file: " << argv[2] << endl;
-            return 2;
-        }
+    {   
+        string test_file_name = argv[2];
+        csvstream test_file(test_file_name);
 
-        classifier test(inFileTest);
-
+        classifier test(test_file);
+        
         train.print_predict_test(test);
 
     }
 
-    // ./classifier.exe w16_projects_exam.csv sp16_projects_exam.csv > projects_exam.out.txt
 
 
 
@@ -130,20 +124,18 @@ classifier::classifier() : num_posts(0), vocabulary_size(0)
 {
 }
 
-classifier::classifier(ifstream &train) : classifier()
+// Change the ifstream to csvstream
+classifier::classifier(csvstream &train) : classifier()
 {
-    string line;
-    getline(train, line);
-    // Title: "tag,content"
-    if (line.size() == 11)
-    {
-        initialize_method_one(train);
+
+    map<string, string> row;
+    vector<string> h = train.getheader();
+    while (train >> row) {        
+        string tag = row[h[h.size() - 2]];
+        string content = row[h[h.size() - 1]];
+        posts_read(content, tag);
     }
-    // Title: "n,unique_views,tag,content"
-    if (line.size() == 26)
-    {
-        initialize_method_two(train);
-    }
+
     vocabulary_size = words_bag.size();
     for (auto &[key, values]: tags_count) {
         values.second = log_prior(key);
@@ -153,6 +145,8 @@ classifier::classifier(ifstream &train) : classifier()
     }
 
 }
+
+
 
 void classifier::initialize_method_one(ifstream &train)
 {
