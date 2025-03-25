@@ -22,6 +22,12 @@ public:
      // Calculate lnP(w|C) for label C and word w
      double log_likelihood(string tag, string word);
 
+     void print_predict_test(classifier &test);
+
+     int get_num_posts();
+     
+     map<int, pair<string,string>>& get_posts();
+
 private:
     // The total number of posts in the entire training set.
     int num_posts;
@@ -33,10 +39,12 @@ private:
     map<int, pair<string, string>> posts;
     // For each word w, the number of posts in the entire training set that contain w.
     map<string, int> words_count;
-    // For each label C, the number of posts with that label.
+    // For each label C, the number of posts with that label, 
     map<string, pair<int, double>>tags_count;
     // For each label C and word w, the number of posts with label C that contain w.
     map<pair<string, string>, pair<int, double>> words_tags_count;
+    // <tag, log_prob_final_score>
+    map<string, double> score;
 
     // Initialize classifier by data(Title: "tag,content")
     void initialize_method_one(ifstream &train);
@@ -79,15 +87,6 @@ int main(int argc, char *argv[])
         cout << "Error opening file: " << argv[1] << endl;
         return 1;
     }
-    if (argc == 3)
-    {
-        ifstream inFileTest(argv[2]);
-        if (!inFileTest.is_open())
-        {
-            cout << "Error opening file: " << argv[2] << endl;
-            return 2;
-        }
-    }
 
     // 2. Set floating point precision
     cout.precision(3);
@@ -96,8 +95,36 @@ int main(int argc, char *argv[])
     classifier train(inFileTrain);
 
     // 4. Print train data
-    train.print_train_info();
+
+    if (argc == 2)
+    {
+        train.print_train_info();
+    }
+
+
+    // 5. If have test
+    if (argc == 3)
+    {
+        ifstream inFileTest(argv[2]);
+        if (!inFileTest.is_open())
+        {
+            cout << "Error opening file: " << argv[2] << endl;
+            return 2;
+        }
+
+        classifier test(inFileTest);
+
+        train.print_predict_test(test);
+
+    }
+
+    // ./classifier.exe w16_projects_exam.csv sp16_projects_exam.csv > projects_exam.out.txt
+
+
+
 };
+
+
 
 classifier::classifier() : num_posts(0), vocabulary_size(0)
 {
@@ -218,10 +245,78 @@ double classifier::log_likelihood(string tag, string word) {
         double posts_word = words_count[word];
         if (posts_word != 0) {
             posts_tag_word = posts_word;
+            posts_tag = num_posts;
         }
         else {
             posts_tag_word = 1;
+            posts_tag = num_posts;
         }
     }
     return log(posts_tag_word / posts_tag);
 }
+
+void classifier::print_predict_test(classifier &test){
+    cout << "trained on " << num_posts << " examples" << endl << endl;
+    
+    cout << "test data:" << endl;
+
+    int correct_pred = 0; 
+    int total_pred = test.get_num_posts();
+    map<int, pair<string,string>> & posts = test.get_posts();
+
+    for (int i = 1; i <= total_pred; i++){
+        string& label = posts[i].first;
+
+        string& content = posts[i].second;
+        
+        double max_score = -INFINITY;
+        string pred_tag = "";
+
+        for (const auto &[key, values] : tags_count){
+            string word = "";
+            istringstream words(content);
+            double total = values.second;
+            set<std::string> words_in_post;
+            while (words >> word)
+            {
+                words_in_post.insert(word);
+            }
+            for (const auto &word : words_in_post)
+            {
+                total += log_likelihood(key, word);
+            }
+            if (max_score < total) {
+                max_score = total;
+                pred_tag = key;
+            }
+        }
+
+        cout << "  correct = " << label << ", predicted = " << pred_tag 
+        << ", log-probability score = " << max_score << endl;  
+        cout << "  content = " << content << endl << endl;
+// ./classifier.exe train_small.csv test_small.csv > test_small.out.txt
+// diff -q test_small.out.txt test_small.out.correct
+      
+
+        if (label == pred_tag) {
+            correct_pred++;
+        }
+    }    
+    cout << "performance: " << correct_pred << " / " << total_pred <<
+    " posts predicted correctly" << endl;
+}
+
+
+
+int classifier::get_num_posts()
+{
+    return num_posts;
+}
+
+map<int, pair<string,string>>& classifier::get_posts()
+{
+    return posts;
+}
+
+
+
