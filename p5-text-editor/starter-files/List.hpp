@@ -101,6 +101,7 @@ public:
     // will work correctly without defining these, you should omit them. A user
     // of the class must be able to copy, assign, and destroy Iterators.
 
+    
 
 
     // Your iterator should implement the following public operators:
@@ -246,7 +247,8 @@ List<T>::~List() {
 
 // Copy constructor
 template <typename T>
-List<T>::List(const List<T>& other_list) : first(nullptr), last(nullptr), current_size(0) {
+List<T>::List(const List<T>& other_list) : 
+first(nullptr), last(nullptr), current_size(0) {
   copy_all(other_list);
 }
 
@@ -375,7 +377,8 @@ void List<T>::copy_all(const List<T> &other) {
 
  // construct an Iterator at a specific position in the given List
 template <typename T>
-List<T>::Iterator::Iterator(const List *lp, Node *np) : list_ptr(lp), node_ptr(np) {
+List<T>::Iterator::Iterator(const List *lp, Node *np) 
+: list_ptr(lp), node_ptr(np) {
 
 }
 
