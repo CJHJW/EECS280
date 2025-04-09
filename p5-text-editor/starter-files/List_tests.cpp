@@ -80,6 +80,32 @@ TEST(test_list_assign_op_both_empty)
 
 }
 
+TEST(test_list_assign_self_assignment)
+{
+    List<int> data_list;
+
+    for (int i = 0; i < 5; ++i)
+    {
+        data_list.push_back(i);
+    }
+
+    ASSERT_TRUE(data_list.size() == 5);
+
+    data_list = data_list;
+
+    ASSERT_TRUE(data_list.size() == 5);
+
+    int j = 0;
+    for (List<int>::Iterator it = data_list.begin(); it != data_list.end(); ++it)
+    {
+        ASSERT_EQUAL(*it, j);
+        j++;
+    }
+
+
+
+}
+
 // Checks if the copy constructor in the list class works properly
 TEST(test_list_copy_ctor)
 {
