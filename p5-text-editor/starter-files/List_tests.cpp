@@ -336,7 +336,7 @@ TEST(test_list_erase_middle)
     ++it1;
     ++it1;
 
-    cout << "this is the value " << *(++(++(list.begin()))) << endl;
+    // cout << "this is the value " << *(++(++(list.begin()))) << endl;
 
     // List currently chould be 0 1 2 3 4
 
