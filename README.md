@@ -8,4 +8,7 @@ Course webiste: https://eecs280.org/
 ### [Project3: Euchre](https://eecs280staff.github.io/euchre/)
 ### [Project4: Machine Learning](https://eecs280staff.github.io/ml-classifier/#ml-classifier)
 ### [Project5: Text Editor](https://eecs280staff.github.io/list-editor/)
+### [Project6: BST Map](https://eecs280staff.github.io/bst-map/)
+## Acknowledgments
+These materials were developed for EECS 280, at the University of Michigan. 
 
